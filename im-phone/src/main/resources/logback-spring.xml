@@ -1,0 +1,31 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d %p (%file:%line\)- %m%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="syslog"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <File>../log/im-phone/laundry_im_phone_log.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>../log/im-phone/laundry_im_phone_log.%d.%i.log</fileNamePattern>
+            <maxHistory>30</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>2048KB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d %p (%file:%line\)- %m%n
+            </pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+    <logger name="om.im.user.server" level="DEBUG">
+        <appender-ref ref="syslog" />
+    </logger>
+</configuration>
