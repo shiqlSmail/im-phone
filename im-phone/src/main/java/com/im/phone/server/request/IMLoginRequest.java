@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 
 @Getter
 @Setter
-public class IlonwLoginRequest {
+public class IMLoginRequest {
 
     @ApiModelProperty(value = "手机号码")
     @Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
