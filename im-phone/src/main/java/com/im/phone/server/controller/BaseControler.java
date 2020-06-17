@@ -1,8 +1,15 @@
 package com.im.phone.server.controller;
 
+import com.im.phone.server.request.UserRegisterRequest;
 import com.im.phone.server.system.InterfaceBean;
+import com.im.phone.server.util.IpUtils;
+import com.im.phone.server.xml.MessageUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,5 +35,14 @@ public class BaseControler extends InterfaceBean {
         map.put("app_public_key",appPublicKey);
         map.put("app_private_key",appPrivateKey);
         return map;
+    }
+
+    public String  responseResult(String transCode,Map<String, Object> bodyMap,String esb){
+        Map<String, Object> map = sendXmlMsg(transCode);
+        String xml = MessageUtils.mapToXml(map,bodyMap);
+        log.info("请求的xml信息为："+xml);
+        String response = toSendPostXml(esb, xml);
+        log.info("最终返回的结果为："+response);
+        return response;
     }
 }

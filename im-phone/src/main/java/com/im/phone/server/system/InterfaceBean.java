@@ -24,7 +24,7 @@ public class InterfaceBean extends HttpRequestUtils {
 
             //获取url，需解密
             String desUrl = SystemConfig.getProperties(url);
-            log.info("获取加密的url信息："+desUrl+",解密过后的url："+desUrl);
+            log.info("获取url信息："+desUrl);
             httpRespons = request.sendPostXml(desUrl,xml);
             log.info("post返回结果为："+httpRespons.getContent());
         } catch (Exception e) {

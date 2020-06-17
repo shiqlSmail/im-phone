@@ -35,17 +35,12 @@ public class UserController extends BaseControler {
     @PostMapping("/login")
     @ApiOperation(value="用户登录", notes="用户接口")
     public String toLogin(@RequestBody IMLoginRequest param){
-        Map<String, Object> map = sendXmlMsg("1001002");
         Map<String,Object> bodyMap = new HashMap<>();
         bodyMap.put("phone", param.getPhone());
         bodyMap.put("password", param.getPassword());
         bodyMap.put("loginType", param.getLoginType());
         bodyMap.put("smscode", param.getSmsCode());
-        String xml = MessageUtils.mapToXml(map,bodyMap);
-        log.info("请求的xml信息为："+xml);
-        String response = toSendPostXml("1001", xml);
-        log.info("最终返回的结果为："+response);
-        return response;
+        return responseResult("1001002",bodyMap,"1001");
     }
 
     /**
@@ -54,22 +49,16 @@ public class UserController extends BaseControler {
      * @return
      */
     @CrossOrigin(origins = "*", maxAge = 3600)
-    @RequestMapping(value = "register")
+    @PostMapping(value = "register")
     @ResponseBody
     public String  toRegister(@RequestBody UserRegisterRequest userRegisterRequest){
         HttpServletRequest request =((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        Map<String, Object> map = sendXmlMsg("1001001");
         Map<String,Object> bodyMap = new HashMap<>();
         bodyMap.put("ip", IpUtils.getIpAddr(request));
         bodyMap.put("password",userRegisterRequest.getPassword());
         bodyMap.put("phone",userRegisterRequest.getPhone());
         bodyMap.put("smscode",userRegisterRequest.getSmscode());
-
-        String xml = MessageUtils.mapToXml(map,bodyMap);
-        log.info("请求的xml信息为："+xml);
-        String response = toSendPostXml("1001", xml);
-        log.info("最终返回的结果为："+response);
-        return response;
+        return responseResult("1001001",bodyMap,"1001");
     }
 
 
@@ -79,17 +68,11 @@ public class UserController extends BaseControler {
      * @return
      */
     @CrossOrigin(origins = "*", maxAge = 3600)
-    @RequestMapping(value = "checkPhone")
+    @PostMapping(value = "checkPhone")
     @ResponseBody
     public String  checkPhone(@RequestBody CheckPhoneRequest checkPhoneRequest){
-        Map<String, Object> map = sendXmlMsg("1001003");
         Map<String,Object> bodyMap = new HashMap<>();
         bodyMap.put("phone",checkPhoneRequest.getPhone());
-
-        String xml = MessageUtils.mapToXml(map,bodyMap);
-        log.info("请求的xml信息为："+xml);
-        String response = toSendPostXml("1001", xml);
-        log.info("最终返回的结果为："+response);
-        return response;
+        return responseResult("1001003",bodyMap,"1001");
     }
 }
