@@ -1,5 +1,6 @@
 package com.im.phone.server.controller;
 
+import com.im.phone.server.common.Constants;
 import com.im.phone.server.request.CheckPhoneRequest;
 import com.im.phone.server.request.IMLoginRequest;
 import com.im.phone.server.request.UserRegisterRequest;
@@ -17,6 +18,12 @@ import java.util.Map;
 
 /**
  * 用户中心
+ *
+ * 方法请求参数说明：
+ *      responseResult(1,2,3);
+ *      1：代表每个交易的交易码，统一配置在Constants类
+ *      2：代表请求需要的参数，可从ESB控制台找到
+ *      3：代表ESB连接路径，写死，具体改变配置在配置文件中
  *
  * @author shiqilong
  */
@@ -40,7 +47,7 @@ public class UserController extends BaseControler {
         bodyMap.put("password", param.getPassword());
         bodyMap.put("loginType", param.getLoginType());
         bodyMap.put("smscode", param.getSmsCode());
-        return responseResult("1001002",bodyMap,"1001");
+        return responseResult(Constants.USER_LOGIN,bodyMap,Constants.ESB);
     }
 
     /**
@@ -58,7 +65,7 @@ public class UserController extends BaseControler {
         bodyMap.put("password",userRegisterRequest.getPassword());
         bodyMap.put("phone",userRegisterRequest.getPhone());
         bodyMap.put("smscode",userRegisterRequest.getSmscode());
-        return responseResult("1001001",bodyMap,"1001");
+        return responseResult(Constants.USER_REGISTER,bodyMap,Constants.ESB);
     }
 
 
@@ -73,6 +80,6 @@ public class UserController extends BaseControler {
     public String  checkPhone(@RequestBody CheckPhoneRequest checkPhoneRequest){
         Map<String,Object> bodyMap = new HashMap<>();
         bodyMap.put("phone",checkPhoneRequest.getPhone());
-        return responseResult("1001003",bodyMap,"1001");
+        return responseResult(Constants.USER_CHECKPHONE,bodyMap,Constants.ESB);
     }
 }
