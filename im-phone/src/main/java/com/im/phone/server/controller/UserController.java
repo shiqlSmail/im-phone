@@ -1,19 +1,20 @@
 package com.im.phone.server.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.im.phone.server.cache.Cache;
 import com.im.phone.server.common.Constants;
-import com.im.phone.server.request.CheckPhoneRequest;
-import com.im.phone.server.request.IMLoginRequest;
-import com.im.phone.server.request.UserRegisterRequest;
+import com.im.phone.server.request.*;
 import com.im.phone.server.util.IpUtils;
-import com.im.phone.server.xml.MessageUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -47,7 +48,17 @@ public class UserController extends BaseControler {
         bodyMap.put("password", param.getPassword());
         bodyMap.put("loginType", param.getLoginType());
         bodyMap.put("smscode", param.getSmsCode());
-        return responseResult(Constants.USER_LOGIN,bodyMap,Constants.ESB);
+
+        String resultStr = responseResult(Constants.USER_LOGIN,bodyMap,Constants.ESB);
+        log.info("返回的数据为："+resultStr);
+        JSONObject obj = JSONObject.parseObject(resultStr);
+        Object  str = null;
+        String  resCode = (String)obj.get("resCode");
+        if(StringUtils.equals(resCode,"000000")){
+            str = obj.get("resData");
+            Cache.put("saveUserData",str);
+        }
+        return resultStr;
     }
 
     /**
@@ -81,5 +92,42 @@ public class UserController extends BaseControler {
         Map<String,Object> bodyMap = new HashMap<>();
         bodyMap.put("phone",checkPhoneRequest.getPhone());
         return responseResult(Constants.USER_CHECKPHONE,bodyMap,Constants.ESB);
+    }
+
+    /**
+     * 用户修改密码
+     *
+     * @return
+     */
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @PostMapping(value = "updatePassword")
+    @ResponseBody
+    public String  updatePassword(@RequestBody UpdatePasswordRequest updatePasswordRequest){
+        String str = String.valueOf(Cache.get(updatePasswordRequest.getPhone()));
+        if("null".equals(str)){
+            return getBaseResultMaps("2000001","请先登录","");
+        }
+        net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(str);
+        HashMap<String, String> maps = JsonObjectToHashMap(jsonObject);
+
+        Map<String,Object> bodyMap = new HashMap<>();
+        bodyMap.put("phone",maps.get("imUserPhone"));
+        bodyMap.put("password",updatePasswordRequest.getPhone());
+        return responseResult(Constants.USER_CHECKPHONE,bodyMap,Constants.ESB);
+    }
+
+    /**
+     * 发送短信验证码
+     *
+     * @return
+     */
+    @CrossOrigin(origins = "*", maxAge = 3600)
+    @PostMapping(value = "sendsms")
+    @ResponseBody
+    public String  sendSms(@RequestBody SendSMSRequest sendSMSRequest){
+        HttpServletRequest request =((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        Map<String,Object> bodyMap = new HashMap<>();
+        bodyMap.put("phone",sendSMSRequest.getPhone());
+        return responseResult(Constants.SEND_SMS,bodyMap,Constants.ESB);
     }
 }

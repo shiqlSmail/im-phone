@@ -1,9 +1,16 @@
 package com.im.phone.server.system;
 
+import com.alibaba.fastjson.JSON;
 import com.im.phone.server.config.SystemConfig;
+import com.im.phone.server.util.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.net.ConnectException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 接口bean，用于统一接口调用
@@ -27,7 +34,10 @@ public class InterfaceBean extends HttpRequestUtils {
             log.info("获取url信息："+desUrl);
             httpRespons = request.sendPostXml(desUrl,xml);
             log.info("post返回结果为："+httpRespons.getContent());
-        } catch (Exception e) {
+        } catch(ConnectException tex){
+            //单独处理超时
+            return setTimeOut();
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return httpRespons.getContent();
@@ -48,9 +58,25 @@ public class InterfaceBean extends HttpRequestUtils {
             log.info("获取加密的url信息："+desUrl+",解密过后的url："+desUrl);
             httpRespons = request.uploadFileSendPost(desUrl,files,user);
             log.info("post返回结果为："+httpRespons);
-        } catch (Exception e) {
+        } catch(ConnectException tex){
+            //单独处理超时
+            return setTimeOut();
+        }catch (Exception e) {
             e.printStackTrace();
         }
         return httpRespons;
+    }
+
+    /**
+     * 设置超时单独处理
+     * @return
+     */
+    public static String setTimeOut(){
+        //单独处理超时
+        Map<String,Object> timeOutMap = new HashMap<>();
+        timeOutMap.put("resCode","TIMEOUT");
+        timeOutMap.put("resMessage","请求超时");
+        timeOutMap.put("resTimes", DateUtil.getDateTime(new Date()));
+        return JSON.toJSONString(timeOutMap);
     }
 }

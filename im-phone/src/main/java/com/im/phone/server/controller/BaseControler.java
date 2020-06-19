@@ -1,16 +1,13 @@
 package com.im.phone.server.controller;
 
-import com.im.phone.server.request.UserRegisterRequest;
+import com.alibaba.fastjson.JSON;
 import com.im.phone.server.system.InterfaceBean;
-import com.im.phone.server.util.IpUtils;
 import com.im.phone.server.xml.MessageUtils;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class BaseControler extends InterfaceBean {
@@ -44,5 +41,26 @@ public class BaseControler extends InterfaceBean {
         String response = toSendPostXml(esb, xml);
         log.info("最终返回的结果为："+response);
         return response;
+    }
+
+    public String getBaseResultMaps(String code,String msg,Object object) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("resCode", code);
+        map.put("resMsg", msg);
+        map.put("resData", object);
+        return JSON.toJSONString(map);
+    }
+
+    //1.將JSONObject對象轉換為HashMap<String,String>
+    public static HashMap<String, String> JsonObjectToHashMap(JSONObject jsonObj){
+        HashMap<String, String> data = new HashMap<String, String>();
+        Iterator it = jsonObj.keys();
+        while(it.hasNext()){
+            String key = String.valueOf(it.next().toString());
+            String value = (String)jsonObj.get(key).toString();
+            data.put(key, value);
+        }
+        System.out.println(data);
+        return data;
     }
 }
