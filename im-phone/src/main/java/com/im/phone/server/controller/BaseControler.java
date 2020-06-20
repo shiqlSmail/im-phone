@@ -1,36 +1,24 @@
 package com.im.phone.server.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.im.phone.server.crypto.SM2;
 import com.im.phone.server.system.InterfaceBean;
 import com.im.phone.server.xml.MessageUtils;
 import net.sf.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
+import org.bouncycastle.math.ec.ECPoint;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class BaseControler extends InterfaceBean {
-    @Value("${ilonw.app_id}")
-    private String appId;
-    @Value("${ilonw.app_key}")
-    private String appKey;
-    @Value("${ilonw.app_public_key}")
-    private String appPublicKey;
-    @Value("${ilonw.app_private_key}")
-    private String appPrivateKey;
 
     public  Map<String, Object> sendXmlMsg(String  transCode){
         Map<String, Object> map = new HashMap<>();
         map.put("sys_channel_id",transCode);
         map.put("sys_channel_name","IM即时通讯");
-        map.put("key",appId);
-        map.put("ip","192.168.0.1");
-
-        map.put("app_id",appId);
-        map.put("app_key",appKey);
-        map.put("app_public_key",appPublicKey);
-        map.put("app_private_key",appPrivateKey);
+        map.put("key","20200701");
+        map.put("ip","192.168.0.5");
         return map;
     }
 
@@ -38,7 +26,10 @@ public class BaseControler extends InterfaceBean {
         Map<String, Object> map = sendXmlMsg(transCode);
         String xml = MessageUtils.mapToXml(map,bodyMap);
         log.info("请求的xml信息为："+xml);
-        String response = toSendPostXml(esb, xml);
+        //对请求参数进行加密
+        String signParam = sign(xml);
+        log.info("请求的xml加密信息为："+signParam);
+        String response = toSendPostXml(esb,signParam);
         log.info("最终返回的结果为："+response);
         return response;
     }
@@ -57,10 +48,18 @@ public class BaseControler extends InterfaceBean {
         Iterator it = jsonObj.keys();
         while(it.hasNext()){
             String key = String.valueOf(it.next().toString());
-            String value = (String)jsonObj.get(key).toString();
+            String value = jsonObj.get(key).toString();
             data.put(key, value);
         }
         System.out.println(data);
         return data;
+    }
+
+    public String sign(String sign){
+        SM2 sm02 = new SM2();
+        ECPoint publicKey = sm02.importPublicKey("H:\\crypto\\esb-publickey.pem");
+        byte[] data = sm02.encrypt(sign, publicKey);
+        String aesEncrypt1 = SM2.printHexString(data);
+        return aesEncrypt1;
     }
 }

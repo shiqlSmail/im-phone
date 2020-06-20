@@ -22,13 +22,4 @@ public class MessageFactory {
         sysHeadMap.put("APP_IP",map.get("ip"));
         return sysHeadMap;
     }
-
-    public static Map<String,Object> getEncryptionHead(Map<String,Object> map){
-        Map<String,Object> encryptionHeadMap = new LinkedHashMap<>();
-        encryptionHeadMap.put("APP_ID",map.get("app_id"));
-        encryptionHeadMap.put("APP_KEY",map.get("app_key"));
-        encryptionHeadMap.put("APP_PUBLIC_KEY",map.get("app_public_key"));
-        encryptionHeadMap.put("APP_PRIVATE_KEY",map.get("app_private_key"));
-        return encryptionHeadMap;
-    }
 }

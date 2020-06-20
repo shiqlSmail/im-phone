@@ -10,12 +10,10 @@ public class MessageUtils {
     public static String mapToXml(Map<String,Object> map,Map<String,Object> bodyMap){
         Map<String,Object> resultMap = new LinkedHashMap<>();
         Map<String,Object> sysHeadMap = MessageFactory.getSysHead(map);
-        Map<String,Object> encryptionHeadMap = MessageFactory.getEncryptionHead(map);
 
         Map<String,Object> headMap = new LinkedHashMap<>();
         Map<String,Object> toXmlMap = new LinkedHashMap<>();
         resultMap.put("SYS_HEAD",sysHeadMap);
-        resultMap.put("ENCRYPTION_HEAD",encryptionHeadMap);
         headMap.put("HEAD",resultMap);
         headMap.put("BODY",bodyMap);
         toXmlMap.put("SERVICE",headMap);
