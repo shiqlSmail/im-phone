@@ -27,7 +27,7 @@ public class SwaggerConfig {
                 .useDefaultResponseMessages(false)
                 .forCodeGeneration(false)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.im.phone.server.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.im.phone.server.controller.apply"))
                 .paths(PathSelectors.any())//过滤的接口
                 .build()
                 .apiInfo(demoApiInfo());

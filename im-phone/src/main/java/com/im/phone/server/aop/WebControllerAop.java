@@ -33,7 +33,7 @@ public class WebControllerAop {
      * 2. 指定切点
      * 匹配com.zdj.springboot_aop.Controller包及其子包下面的所有类的所有方法
      */
-    @Pointcut("execution(* com.im.phone.server.controller..*.*(..))")
+    @Pointcut("execution(* com.im.phone.server.controller.apply..*.*(..))")
     public void executeService() {
 
     }
@@ -91,12 +91,12 @@ public class WebControllerAop {
      * @param joinPoint
      * @param keys
      */
-    @AfterReturning(value = "execution(* com.im.phone.server.controller..*.*(..))", returning = "keys")
+    @AfterReturning(value = "execution(* com.im.phone.server.controller.apply..*.*(..))", returning = "keys")
     public void doAfterReturningAdvice1(JoinPoint joinPoint, Object keys) {
         log.info("第一个后置返回通知的返回值是 ：" + keys);
     }
 
-    @AfterReturning(value = "execution(* com.im.phone.server.controller..*.*(..))", returning = "keys", argNames = "keys")
+    @AfterReturning(value = "execution(* com.im.phone.server.controller.apply..*.*(..))", returning = "keys", argNames = "keys")
     public void doAfterReturningAdvice2(String keys) { // 通知方法形影参数的类型是String
         log.info("第二个后置返回通知的返回值是 ：" + keys);
     }
@@ -131,7 +131,7 @@ public class WebControllerAop {
      *   环绕通知非常强大，可以决定目标方法是否执行，什么时候执行，执行时是否需要替换方法参数，执行完毕是否需要替换返回值。
      *   环绕通知第一个参数必须是org.aspectj.lang.ProceedingJoinPoint类型
      */
-    @Around("execution(* com.im.phone.server.controller..*.*(..))")
+    @Around("execution(* com.im.phone.server.controller.apply..*.*(..))")
     public Object doAroundService(ProceedingJoinPoint proceedingJoinPoint) {
         log.info("环绕通知的目标方法名为 ： " + proceedingJoinPoint.getSignature().getName());
         try {

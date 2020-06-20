@@ -1,8 +1,9 @@
-package com.im.phone.server.controller;
+package com.im.phone.server.controller.apply;
 
 import com.alibaba.fastjson.JSONObject;
 import com.im.phone.server.cache.Cache;
 import com.im.phone.server.common.Constants;
+import com.im.phone.server.controller.BaseControler;
 import com.im.phone.server.request.*;
 import com.im.phone.server.util.IpUtils;
 import io.swagger.annotations.Api;
@@ -125,7 +126,6 @@ public class UserController extends BaseControler {
     @PostMapping(value = "sendsms")
     @ResponseBody
     public String  sendSms(@RequestBody SendSMSRequest sendSMSRequest){
-        HttpServletRequest request =((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         Map<String,Object> bodyMap = new HashMap<>();
         bodyMap.put("phone",sendSMSRequest.getPhone());
         return responseResult(Constants.SEND_SMS,bodyMap,Constants.ESB);
