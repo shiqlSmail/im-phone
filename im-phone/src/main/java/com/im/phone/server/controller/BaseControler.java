@@ -1,24 +1,32 @@
 package com.im.phone.server.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.im.phone.server.cache.ICacheManager;
 import com.im.phone.server.crypto.SM2;
+import com.im.phone.server.redis.RedisUtils;
 import com.im.phone.server.system.InterfaceBean;
 import com.im.phone.server.xml.MessageUtils;
 import net.sf.json.JSONObject;
 import org.bouncycastle.math.ec.ECPoint;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 public class BaseControler extends InterfaceBean {
+    @Autowired
+    public ICacheManager cacheManager;
+
+    @Autowired
+    public RedisUtils redisUtils;
 
     public  Map<String, Object> sendXmlMsg(String  transCode){
         Map<String, Object> map = new HashMap<>();
         map.put("sys_channel_id",transCode);
         map.put("sys_channel_name","IM即时通讯");
         map.put("key","20200701");
-        map.put("ip","192.168.0.5");
+        map.put("ip","127.0.0.1");
         return map;
     }
 
@@ -55,8 +63,10 @@ public class BaseControler extends InterfaceBean {
         return data;
     }
 
+
     public String sign(String sign){
         SM2 sm02 = new SM2();
+        //ECPoint publicKey = sm02.importPublicKey("/usr/src/crypto/esb-publickey.pem");
         ECPoint publicKey = sm02.importPublicKey("H:\\crypto\\esb-publickey.pem");
         byte[] data = sm02.encrypt(sign, publicKey);
         String aesEncrypt1 = SM2.printHexString(data);

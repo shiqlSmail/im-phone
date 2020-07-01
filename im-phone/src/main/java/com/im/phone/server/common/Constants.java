@@ -5,7 +5,8 @@ package com.im.phone.server.common;
  * 记录所有交易码
  */
 public interface Constants {
-    public static final String ESB = "1001";
+    public static final String ESBXML = "1001";
+    public static final String ESBJSON = "1002";
 
     /****************************  用户中心接口  **********************************/
     public static final String USER_LOGIN = "1001002";
