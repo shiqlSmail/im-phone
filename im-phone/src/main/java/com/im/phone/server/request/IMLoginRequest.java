@@ -23,5 +23,5 @@ public class IMLoginRequest {
     private String loginType;
 
     @ApiModelProperty(value = "验证码")
-    private String smsCode;
+    private String smscode;
 }

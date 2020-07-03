@@ -44,11 +44,24 @@ public class UserController extends BaseControler {
     @ApiOperation(value="用户登录", notes="用户接口")
     public String toLogin(@RequestBody IMLoginRequest param){
         Map<String,Object> bodyMap = new HashMap<>();
+        //判断登录方式
         bodyMap.put("phone", param.getPhone());
-        bodyMap.put("password", param.getPassword());
-        bodyMap.put("loginType", param.getLoginType());
-        bodyMap.put("smscode", param.getSmsCode());
-
+        if("1".equals(param.getLoginType())){
+            //判断验证码输入是否正确
+            if(cacheManager.isContains("smscode"+param.getPhone()) == Boolean.FALSE){
+                return getBaseResultMaps("2000002","请先获取验证码","");
+            }else if(!param.getSmscode().equals(cacheManager.isContains("smscode"+param.getPhone()))){
+                return getBaseResultMaps("2000003","验证码输入有误，请重新输入","");
+            }else{
+                bodyMap.put("password", "");
+                bodyMap.put("loginType", "1");
+                bodyMap.put("smscode", param.getSmscode());
+            }
+        }else{
+            bodyMap.put("password", param.getPassword());
+            bodyMap.put("loginType", "2");
+            bodyMap.put("smscode", "");
+        }
         String resultStr = responseResult(Constants.USER_LOGIN,bodyMap,Constants.ESBXML);
         log.info("返回的数据为："+resultStr);
         JSONObject obj = JSONObject.parseObject(resultStr);
@@ -57,6 +70,7 @@ public class UserController extends BaseControler {
             Object str = obj.get("resData");
             cacheManager.putCache(param.getPhone(),new CacheManagerEntity(str));
         }
+        cacheManager.clearByKey("smscode"+param.getPhone());
         return resultStr;
     }
 
@@ -74,10 +88,8 @@ public class UserController extends BaseControler {
         bodyMap.put("ip", IpUtils.getIpAddr(request));
         bodyMap.put("password",userRegisterRequest.getPassword());
         bodyMap.put("phone",userRegisterRequest.getPhone());
-        bodyMap.put("smscode",userRegisterRequest.getSmscode());
         return responseResult(Constants.USER_REGISTER,bodyMap,Constants.ESBXML);
     }
-
 
     /**
      * 检查手机号是否存在
@@ -113,20 +125,6 @@ public class UserController extends BaseControler {
         bodyMap.put("phone",maps.get("imUserPhone"));
         bodyMap.put("password",updatePasswordRequest.getPhone());
         return responseResult(Constants.USER_CHECKPHONE,bodyMap,Constants.ESBXML);
-    }
-
-    /**
-     * 发送短信验证码
-     *
-     * @return
-     */
-    @CrossOrigin(origins = "*", maxAge = 3600)
-    @PostMapping(value = "sendsms")
-    @ApiOperation(value="发送短信验证码", notes="用户接口")
-    public String  sendSms(@RequestBody SendSMSRequest sendSMSRequest){
-        Map<String,Object> bodyMap = new HashMap<>();
-        bodyMap.put("phone",sendSMSRequest.getPhone());
-        return responseResult(Constants.SEND_SMS,bodyMap,Constants.ESBXML);
     }
 
     /**
