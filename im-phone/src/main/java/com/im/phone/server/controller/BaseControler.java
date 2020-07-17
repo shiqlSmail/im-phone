@@ -37,7 +37,7 @@ public class BaseControler extends InterfaceBean {
         log.info("请求的xml信息为："+xml);
         //对请求参数进行加密
         String signParam = sign(xml);
-        net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(signParam);
+        JSONObject jsonObject = JSONObject.fromObject(signParam.trim());
         HashMap<String, String> maps = JsonObjectToHashMap(jsonObject);
         //判断签名是否正确
         if(!StringUtils.isEmpty(maps.get("resCode"))){
@@ -74,13 +74,17 @@ public class BaseControler extends InterfaceBean {
 
 
     public String sign(String sign){
+        Map<String, Object> returnMap = new HashMap<String, Object>();
         SM2 sm02 = new SM2();
         try{
             ECPoint publicKey = sm02.importPublicKey("/usr/src/crypto/esb-publickey.pem");
             //ECPoint publicKey = sm02.importPublicKey("H:\\crypto\\esb-publickey.pem");
             byte[] data = sm02.encrypt(sign, publicKey);
             String aesEncrypt1 = SM2.printHexString(data);
-            return aesEncrypt1;
+
+            returnMap.put("code","SIGN_SUCCESS");
+            returnMap.put("data",aesEncrypt1);
+            return JSON.toJSONString(returnMap);
         }catch(Exception e){
             return getBaseResultMaps("SIGN_ERROR","签名异常","");
         }
